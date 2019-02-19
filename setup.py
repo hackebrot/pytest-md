@@ -26,7 +26,7 @@ setuptools.setup(
     python_requires=">=3.6",
     install_requires=["pytest>=4.2.1"],
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 3 - Alpha",
         "Framework :: Pytest",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Testing",
