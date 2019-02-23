@@ -85,6 +85,26 @@ class MarkdownPlugin:
     def pytest_sessionstart(self, session):
         self.session_start = time.time()
 
+    def create_header(self):
+        return "# Test Report"
+
+    def create_project_link(self):
+        extra = ""
+
+        if self.emojis_enabled:
+            extra = " 📝"
+
+        now = datetime.datetime.now()
+        report_date = now.strftime("%d-%b-%Y")
+        report_time = now.strftime("%H:%M:%S")
+
+        project_link = ""
+        project_link += f"*Report generated on {report_date} at {report_time} "
+        project_link += f"by [pytest-md]*{extra}\n\n"
+        project_link += f"[pytest-md]: https://github.com/hackebrot/pytest-md"
+
+        return project_link
+
     def create_summary(self):
         outcomes = collections.OrderedDict(
             (outcome, len(self.reports[outcome]))
@@ -93,7 +113,9 @@ class MarkdownPlugin:
         )
         num_tests = sum(outcomes.values())
 
-        summary = f"{num_tests} tests ran in {self.session_duration:.2f} seconds"
+        summary = ""
+        summary += f"## Summary\n\n"
+        summary += f"{num_tests} tests ran in {self.session_duration:.2f} seconds"
 
         if self.emojis_enabled:
             summary = f"{summary} ⏱ "
@@ -109,34 +131,18 @@ class MarkdownPlugin:
 
         return summary + outcome_text
 
-    def create_project_link(self):
-
-        extra = ""
-
-        if self.emojis_enabled:
-            extra = " 📝"
-
-        now = datetime.datetime.now()
-        report_date = now.strftime("%d-%b-%Y")
-        report_time = now.strftime("%H:%M:%S")
-
-        project_link = ""
-        project_link += f"*Report generated on {report_date} at {report_time} "
-        project_link += f"by [pytest-md]*{extra}\n\n"
-        project_link += f"[pytest-md]: https://github.com/hackebrot/pytest-md"
-        return project_link
-
     def pytest_sessionfinish(self, session):
         self.session_finish = time.time()
         self.session_duration = self.session_finish - self.session_start
 
-        summary = self.create_summary()
+        header = self.create_header()
         project_link = self.create_project_link()
+        summary = self.create_summary()
 
         report = ""
-        report += f"# Test Report\n\n"
+        report += f"{header}\n\n"
         report += f"{project_link}\n\n"
-        report += f"## Summary\n\n{summary}\n\n"
+        report += f"{summary}"
 
         self.report_path.write_text(report, encoding="utf-8")
 
