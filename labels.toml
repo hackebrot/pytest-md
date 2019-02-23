@@ -1,0 +1,49 @@
+[bug]
+color = "ffeb95"
+description = "Bugs and problems with pytest-md"
+name = "bug"
+
+["code quality"]
+color = "c792ea"
+description = "Tasks related to linting, coding style, type checks"
+name = "code quality"
+
+[dependencies]
+color = "c792ea"
+description = "Tasks related to managing dependencies"
+name = "dependencies"
+
+[discussion]
+color = "82aaff"
+description = "Issues for discussing ideas for features"
+name = "discussion"
+
+["do not merge"]
+color = "ef5350"
+description = "Pull requests which must not be merged"
+name = "do not merge"
+
+[docs]
+color = "21c7a8"
+description = "Tasks to write and update documentation"
+name = "docs"
+
+[enhancement]
+color = "82aaff"
+description = "New feature or enhancement for pytest-md"
+name = "enhancement"
+
+["good first issue"]
+color = "7fdbca"
+description = "Good tasks for newcomers to pytest-md"
+name = "good first issue"
+
+[misc]
+color = "ecc48d"
+description = "Tasks that don't fit any of the other categories"
+name = "misc"
+
+[project]
+color = "d6deeb"
+description = "Tasks related to managing this project"
+name = "project"
