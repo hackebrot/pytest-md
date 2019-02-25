@@ -1,4 +1,6 @@
 def test_generate_markdown_report(testdir, emoji_tests, report_path, report_content):
+    """Test the generated markdown report."""
+
     # create a temporary pytest test module
     testdir.makepyfile(emoji_tests)
 

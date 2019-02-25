@@ -7,6 +7,16 @@ import pytest
 pytest_plugins = "pytester"
 
 
+def pytest_collection_modifyitems(items, config):
+    if config.pluginmanager.hasplugin("emoji"):
+        # Do not skip emoji tests when pytest-emoji is installed
+        return
+
+    for item in items:
+        if item.get_closest_marker("emoji"):
+            item.add_marker(pytest.mark.skip(reason="pytest-emoji is not installed"))
+
+
 @pytest.fixture(name="now")
 def fixture_now():
     freezer = freezegun.freeze_time("2019-01-21 18:30:40")
