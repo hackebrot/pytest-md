@@ -118,7 +118,7 @@ class MarkdownPlugin:
         summary += f"{num_tests} tests ran in {self.session_duration:.2f} seconds"
 
         if self.emojis_enabled:
-            summary = f"{summary} ⏱ "
+            summary = f"{summary} ⏱"
 
         summary += "\n\n"
         outcome_text = ""
@@ -126,7 +126,7 @@ class MarkdownPlugin:
         for outcome, count in outcomes.items():
             text = outcome
             if self.emojis_enabled:
-                text = self.emoji_repr[outcome]
+                text = self.emoji_repr[outcome].strip()
             outcome_text += f"- {count} {text}\n".lower()
 
         return summary + outcome_text
