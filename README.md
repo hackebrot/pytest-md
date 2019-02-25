@@ -111,6 +111,12 @@ $ pytest --emoji -v --md report.md
 
 [pytest-emoji]: https://github.com/hackebrot/pytest-emoji
 
+## Credits
+
+This project is inspired by the fantastic [pytest-html] plugin! 💻
+
+[pytest-html]: https://github.com/pytest-dev/pytest-html
+
 ## Community
 
 Please note that **pytest-md** is released with a [Contributor Code of
@@ -123,9 +129,3 @@ by its terms.
 
 Distributed under the terms of the MIT license, **pytest-md** is free and open
 source software.
-
-## Credits
-
-This project is inspired by the fantastic [pytest-html] plugin!
-
-[pytest-html]: https://github.com/pytest-dev/pytest-html
