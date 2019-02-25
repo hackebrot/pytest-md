@@ -1,6 +1,8 @@
 # pytest-md
 
-Plugin for generating Markdown reports for pytest results 📝
+Plugin for generating Markdown reports for [pytest] results 📝
+
+[pytest]: https://github.com/pytest-dev/pytest
 
 ## Installation
 
