@@ -75,13 +75,13 @@ $ pytest --md report.md
 ```Markdown
 # Test Report
 
-*Report generated on 25-Feb-2019 at 15:18:42 by [pytest-md]*
+*Report generated on 25-Feb-2019 at 17:18:29 by [pytest-md]*
 
 [pytest-md]: https://github.com/hackebrot/pytest-md
 
 ## Summary
 
-8 tests ran in 0.11 seconds
+8 tests ran in 0.05 seconds
 
 - 1 failed
 - 3 passed
@@ -103,13 +103,13 @@ $ pytest --emoji -v --md report.md
 ```Markdown
 # Test Report
 
-*Report generated on 25-Feb-2019 at 15:18:42 by [pytest-md]* 📝
+*Report generated on 25-Feb-2019 at 17:18:29 by [pytest-md]* 📝
 
 [pytest-md]: https://github.com/hackebrot/pytest-md
 
 ## Summary
 
-8 tests ran in 0.07 seconds ⏱
+8 tests ran in 0.06 seconds ⏱
 
 - 1 failed 😰
 - 3 passed 😃
