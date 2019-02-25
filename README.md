@@ -18,7 +18,7 @@ $ pip install pytest-md
 
 ## Usage
 
-The following example code produces the different pytest test outcomes.
+The following example code produces all of the different pytest test outcomes.
 
 ```python
 import random
