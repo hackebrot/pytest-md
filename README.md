@@ -25,10 +25,6 @@ import random
 import pytest
 
 
-def test_passed():
-    assert "emoji" == "hello world"
-
-
 def test_failed():
     assert "emoji" == "hello world"
 
