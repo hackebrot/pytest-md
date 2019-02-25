@@ -7,7 +7,7 @@ Plugin for generating Markdown reports for [pytest] results 📝
 ## Installation
 
 **pytest-md** is available on [PyPI][PyPI] for Python versions 3.6 and newer
-and can be installed with [pip][pip]:
+and can be installed into your enviroment from your terminal via [pip][pip]:
 
 ```text
 $ pip install pytest-md
