@@ -127,9 +127,52 @@ def fixture_report_content(mode, now):
     report_date = now.strftime("%d-%b-%Y")
     report_time = now.strftime("%H:%M:%S")
 
-    reports = {}
+    if mode is Mode.EMOJI_NORMAL:
+        return textwrap.dedent(
+            f"""\
+            # Test Report
 
-    no_emojis = textwrap.dedent(
+            *Report generated on {report_date} at {report_time} by [pytest-md]* 📝
+
+            [pytest-md]: https://github.com/hackebrot/pytest-md
+
+            ## Summary
+
+            7 tests ran in 0.00 seconds ⏱
+
+            - 1 😿
+            - 2 🦊
+            - 1 🙈
+            - 1 🤓
+            - 1 😜
+            - 1 💩
+            """
+        )
+
+    if mode is Mode.EMOJI_VERBOSE:
+        return textwrap.dedent(
+            f"""\
+            # Test Report
+
+            *Report generated on {report_date} at {report_time} by [pytest-md]* 📝
+
+            [pytest-md]: https://github.com/hackebrot/pytest-md
+
+            ## Summary
+
+            7 tests ran in 0.00 seconds ⏱
+
+            - 1 failed 😿
+            - 2 passed 🦊
+            - 1 skipped 🙈
+            - 1 xfail 🤓
+            - 1 xpass 😜
+            - 1 error 💩
+            """
+        )
+
+    # Return the default report for Mode.NORMAL and Mode.VERBOSE
+    return textwrap.dedent(
         f"""\
         # Test Report
 
@@ -149,53 +192,6 @@ def fixture_report_content(mode, now):
         - 1 error
         """
     )
-
-    reports[Mode.NORMAL] = no_emojis
-    reports[Mode.VERBOSE] = no_emojis
-
-    reports[Mode.EMOJI_NORMAL] = textwrap.dedent(
-        f"""\
-        # Test Report
-
-        *Report generated on {report_date} at {report_time} by [pytest-md]* 📝
-
-        [pytest-md]: https://github.com/hackebrot/pytest-md
-
-        ## Summary
-
-        7 tests ran in 0.00 seconds ⏱
-
-        - 1 😿
-        - 2 🦊
-        - 1 🙈
-        - 1 🤓
-        - 1 😜
-        - 1 💩
-        """
-    )
-
-    reports[Mode.EMOJI_VERBOSE] = textwrap.dedent(
-        f"""\
-        # Test Report
-
-        *Report generated on {report_date} at {report_time} by [pytest-md]* 📝
-
-        [pytest-md]: https://github.com/hackebrot/pytest-md
-
-        ## Summary
-
-        7 tests ran in 0.00 seconds ⏱
-
-        - 1 failed 😿
-        - 2 passed 🦊
-        - 1 skipped 🙈
-        - 1 xfail 🤓
-        - 1 xpass 😜
-        - 1 error 💩
-        """
-    )
-
-    return reports[mode]
 
 
 @pytest.fixture(name="report_path")
