@@ -8,24 +8,6 @@ import pytest
 pytest_plugins = "pytester"
 
 
-class Mode(enum.Enum):
-    """Enum for the several test scenarios."""
-
-    NORMAL = "normal"
-    VERBOSE = "verbose"
-    EMOJI_NORMAL = "emoji_normal"
-    EMOJI_VERBOSE = "emoji_verbose"
-
-
-@pytest.fixture(name="now")
-def fixture_now():
-    """Patch the current time for reproducable test reports."""
-    freezer = freezegun.freeze_time("2019-01-21 18:30:40")
-    freezer.start()
-    yield datetime.datetime(2019, 1, 21, 18, 30, 40)
-    freezer.stop()
-
-
 @pytest.fixture(name="emoji_tests", autouse=True)
 def fixture_emoji_tests(testdir):
     """Create a test module with several tests that produce all the different
@@ -109,6 +91,15 @@ def fixture_custom_emojis(request, testdir):
     testdir.makeconftest(conftest)
 
 
+class Mode(enum.Enum):
+    """Enum for the several test scenarios."""
+
+    NORMAL = "normal"
+    VERBOSE = "verbose"
+    EMOJI_NORMAL = "emoji_normal"
+    EMOJI_VERBOSE = "emoji_verbose"
+
+
 @pytest.fixture(name="cli_options")
 def fixture_cli_options(mode):
     """Return CLI options for the different test scenarios."""
@@ -119,6 +110,15 @@ def fixture_cli_options(mode):
         Mode.EMOJI_VERBOSE: ["-v", "--emoji"],
     }
     return cli_options[mode]
+
+
+@pytest.fixture(name="now")
+def fixture_now():
+    """Patch the current time for reproducable test reports."""
+    freezer = freezegun.freeze_time("2019-01-21 18:30:40")
+    freezer.start()
+    yield datetime.datetime(2019, 1, 21, 18, 30, 40)
+    freezer.stop()
 
 
 @pytest.fixture(name="report_content")
