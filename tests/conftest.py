@@ -17,34 +17,45 @@ def fixture_emoji_tests(testdir):
         """\
         import pytest
 
-        def test_passed():
-            assert "emoji" == "emoji"
 
         def test_failed():
             assert "emoji" == "hello world"
+
 
         @pytest.mark.xfail
         def test_xfailed():
             assert 1234 == 100
 
+
         @pytest.mark.xfail
-        def test_xpassed():
+        def test_xpass():
             assert 1234 == 1234
 
-        def test_fox():
-            assert "fox" == "fox"
 
-        @pytest.mark.skipif(True, reason="don't run this test")
+        @pytest.mark.skip(reason="don't run this test")
         def test_skipped():
-            assert "emoji" == "emoji"
+            assert "pytest-emoji" != ""
+
+
+        @pytest.mark.parametrize(
+            "name, expected",
+            [
+                ("Sara", "Hello Sara!"),
+                ("Mat", "Hello Mat!"),
+                ("Annie", "Hello Annie!"),
+            ],
+        )
+        def test_passed(name, expected):
+            assert f"Hello {name}!" == expected
+
 
         @pytest.fixture
-        def name():
-            raise RuntimeError
+        def number():
+            return 1234 / 0
 
-        @pytest.mark.hello
-        def test_error(name):
-            assert name == "hello"
+
+        def test_error(number):
+            assert number == number
         """
     )
 
@@ -80,11 +91,11 @@ def fixture_custom_emojis(request, testdir):
 
 
         def pytest_emoji_xfailed(config):
-            return "🤓 ", "XFAIL 🤓 "
+            return "🤓 ", "XFAILED 🤓 "
 
 
         def pytest_emoji_xpassed(config):
-            return "😜 ", "XPASS 😜 "
+            return "😜 ", "XPASSED 😜 "
     """
     )
 
@@ -138,10 +149,10 @@ def fixture_report_content(mode, now):
 
             ## Summary
 
-            7 tests ran in 0.00 seconds ⏱
+            8 tests ran in 0.00 seconds ⏱
 
             - 1 😿
-            - 2 🦊
+            - 3 🦊
             - 1 🙈
             - 1 🤓
             - 1 😜
@@ -160,13 +171,13 @@ def fixture_report_content(mode, now):
 
             ## Summary
 
-            7 tests ran in 0.00 seconds ⏱
+            8 tests ran in 0.00 seconds ⏱
 
             - 1 failed 😿
-            - 2 passed 🦊
+            - 3 passed 🦊
             - 1 skipped 🙈
-            - 1 xfail 🤓
-            - 1 xpass 😜
+            - 1 xfailed 🤓
+            - 1 xpassed 😜
             - 1 error 💩
             """
         )
@@ -182,10 +193,10 @@ def fixture_report_content(mode, now):
 
         ## Summary
 
-        7 tests ran in 0.00 seconds
+        8 tests ran in 0.00 seconds
 
         - 1 failed
-        - 2 passed
+        - 3 passed
         - 1 skipped
         - 1 xfailed
         - 1 xpassed

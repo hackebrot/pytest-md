@@ -30,12 +30,12 @@ def test_failed():
 
 
 @pytest.mark.xfail
-def test_xfail():
+def test_xfailed():
     assert random.random() == 1.0
 
 
 @pytest.mark.xfail
-def test_xpass():
+def test_xpassed():
     assert 0.0 < random.random() < 1.0
 
 
@@ -114,8 +114,8 @@ $ pytest --emoji -v --md report.md
 - 1 failed 😰
 - 3 passed 😃
 - 1 skipped 🙄
-- 1 xfail 😞
-- 1 xpass 😲
+- 1 xfailed 😞
+- 1 xpassed 😲
 - 1 error 😡
 ```
 
