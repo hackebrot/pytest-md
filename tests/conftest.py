@@ -218,6 +218,24 @@ def pytest_make_parametrize_id(config, val):
     return f"{val!r}"
 
 
+def pytest_generate_tests(metafunc):
+    """Generate several values for the "mode" fixture and add the "emoji"
+    marker for certain test scenarios.
+    """
+    if "mode" not in metafunc.fixturenames:
+        return
+
+    metafunc.parametrize(
+        "mode",
+        [
+            Mode.NORMAL,
+            Mode.VERBOSE,
+            pytest.param(Mode.EMOJI_NORMAL, marks=pytest.mark.emoji),
+            pytest.param(Mode.EMOJI_VERBOSE, marks=pytest.mark.emoji),
+        ],
+    )
+
+
 def pytest_collection_modifyitems(items, config):
     """Skip tests marked with "emoji" if pytest-emoji is not installed."""
     if config.pluginmanager.hasplugin("emoji"):
@@ -226,19 +244,3 @@ def pytest_collection_modifyitems(items, config):
     for item in items:
         if item.get_closest_marker("emoji"):
             item.add_marker(pytest.mark.skip(reason="pytest-emoji is not installed"))
-
-
-def pytest_generate_tests(metafunc):
-    """Generate several values for the "mode" fixture and add the "emoji"
-    marker for certain test scenarios.
-    """
-    if "mode" in metafunc.fixturenames:
-        metafunc.parametrize(
-            "mode",
-            [
-                Mode.NORMAL,
-                Mode.VERBOSE,
-                pytest.param(Mode.EMOJI_NORMAL, marks=pytest.mark.emoji),
-                pytest.param(Mode.EMOJI_VERBOSE, marks=pytest.mark.emoji),
-            ],
-        )
