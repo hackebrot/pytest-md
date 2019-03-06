@@ -5,7 +5,7 @@ import textwrap
 import freezegun
 import pytest
 
-pytest_plugins = "pytester"
+pytest_plugins = ["pytester"]
 
 
 @pytest.fixture(name="emoji_tests", autouse=True)
