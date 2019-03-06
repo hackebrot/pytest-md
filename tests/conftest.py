@@ -116,9 +116,9 @@ def fixture_cli_options(mode):
     """Return CLI options for the different test scenarios."""
     cli_options = {
         Mode.NORMAL: [],
-        Mode.VERBOSE: ["-v"],
+        Mode.VERBOSE: ["--verbose"],
         Mode.EMOJI_NORMAL: ["--emoji"],
-        Mode.EMOJI_VERBOSE: ["-v", "--emoji"],
+        Mode.EMOJI_VERBOSE: ["--verbose", "--emoji"],
     }
     return cli_options[mode]
 
