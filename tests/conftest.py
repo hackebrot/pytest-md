@@ -156,8 +156,7 @@ def fixture_report_content(mode, now):
             - 1 🙈
             - 1 🤓
             - 1 😜
-            - 1 💩
-            """
+            - 1 💩"""
         )
 
     if mode is Mode.EMOJI_VERBOSE:
@@ -171,18 +170,119 @@ def fixture_report_content(mode, now):
 
             ## Summary
 
-            8 tests ran in 0.00 seconds ⏱
+            12 tests ran in 0.10 seconds ⏱
 
-            - 1 failed 😿
-            - 3 passed 🦊
-            - 1 skipped 🙈
-            - 1 xfailed 🤓
-            - 1 xpassed 😜
-            - 1 error 💩
-            """
+                - 2 error 😡
+                - 1 failed 😰
+                - 3 passed 😃
+                - 2 skipped 🙄
+                - 2 xfail 😞
+                - 2 xpass 😲
+
+            ## 2 error 😡
+
+            ### test_example1.py
+
+            0.02 s ⏱ `ERROR at setup of test_error`
+
+            ```
+                @pytest.fixture
+                def number():
+            >       return 1234 / 0
+            E       ZeroDivisionError: division by zero
+
+            test_example1.py:34: ZeroDivisionError
+            ```
+
+            ### test_example2.py
+
+            0.02 s ⏱ `ERROR at setup of test_nope`
+
+            ```
+                @pytest.fixture
+                def number():
+            >       return 1234 / 0
+            E       ZeroDivisionError: division by zero
+
+            test_example2.py:23: ZeroDivisionError
+            ```
+
+            ## 1 failed 😰
+
+            0.22 s ⏱ `test_failed`
+
+            ```
+                def test_failed():
+            >       assert "emoji" == "hello world"
+            E       AssertionError: assert 'emoji' == 'hello world'
+            E         - emoji
+            E         + hello world
+
+            test_example1.py:6: AssertionError
+            ```
+
+            ## 3 passed 😃
+
+            ### test_example1.py
+
+            0.08 s ⏱ `test_passed[Sara-Hello Sara!]`
+            0.07 s ⏱ `test_passed[Mat-Hello Mat!]`
+            0.08 s ⏱ `test_passed[Annie-Hello Annie!]`
+
+            ## 2 skipped 🙄
+
+            ### test_example1.py
+
+            0.00 s ⏱ `test_skipped`
+
+            ### test_example2.py
+
+            0.00 s ⏱ `test_skipped`
+
+            ## 2 xfail 😞
+
+            ### test_example1.py
+
+            0.40 s ⏱ `test_xfail`
+
+            ### test_example2.py
+
+            0.20 s ⏱ `test_xfail`
+
+            ## xpass 😲
+
+            ### test_example1.py
+
+            0.42 s ⏱ `test_xpass`
+
+            ### test_example2.py
+
+            0.22 s ⏱ `test_xpass`
+"""
         )
 
-    # Return the default report for Mode.NORMAL and Mode.VERBOSE
+    if mode is Mode.VERBOSE:
+        return textwrap.dedent(
+            f"""\
+            # Test Report
+
+            *Report generated on {report_date} at {report_time} by [pytest-md]*
+
+            [pytest-md]: https://github.com/hackebrot/pytest-md
+
+            ## Summary
+
+            8 tests ran in 0.00 seconds
+
+            - 1 failed
+            - 3 passed
+            - 1 skipped
+            - 1 xfailed
+            - 1 xpassed
+            - 1 error"""
+        )
+
+    # Return the default report for Mode.NORMAL
     return textwrap.dedent(
         f"""\
         # Test Report
@@ -200,8 +300,7 @@ def fixture_report_content(mode, now):
         - 1 skipped
         - 1 xfailed
         - 1 xpassed
-        - 1 error
-        """
+        - 1 error"""
     )
 
 

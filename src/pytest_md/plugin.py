@@ -1,10 +1,11 @@
 import datetime
 import collections
+import html
 import pathlib
 import time
 
 
-OUTCOMES = ("failed", "passed", "skipped", "xfailed", "xpassed", "error")
+OUTCOMES = ("error", "failed", "passed", "skipped", "xfailed", "xpassed")
 
 
 class MarkdownPlugin:
@@ -131,6 +132,46 @@ class MarkdownPlugin:
 
         return summary + outcome_text
 
+    def create_results(self):
+        outcomes = collections.OrderedDict()
+
+        for outcome in OUTCOMES:
+            if outcome not in self.reports:
+                continue
+            file_reports = collections.OrderedDict()
+            for report in self.reports[outcome]:
+                filesystempath = report.location[0]
+                file_reports.setdefault(filesystempath, [])
+                file_reports[filesystempath].append(report)
+            outcomes[outcome] = file_reports
+
+        results = ""
+
+        for outcome, file_reports in outcomes.items():
+            outcome_text = outcome
+            if self.emojis_enabled:
+                outcome_text = self.emoji_repr[outcome].strip()
+
+            results += f"## {len(self.reports[outcome])} {outcome_text}\n\n"
+
+            for filesystempath, file_reports in file_reports.items():
+                results += f"### {filesystempath}\n\n"
+                for report in file_reports:
+                    domaininfo = report.location[2]
+                    results += f"{report.duration*100:.2f}s"
+                    if self.emojis_enabled:
+                        results += " ⏱ "
+
+                    if outcome == "error":
+                        results += f" `{outcome} at {report.when} of {domaininfo}`\n"
+                    else:
+                        results += f" `{domaininfo}`\n"
+
+                    if outcome in ("error", "failed"):
+                        results += f"```\n{report.longreprtext}```\n"
+                results += "\n"
+        return results
+
     def pytest_sessionfinish(self, session):
         self.session_finish = time.time()
         self.session_duration = self.session_finish - self.session_start
@@ -138,11 +179,13 @@ class MarkdownPlugin:
         header = self.create_header()
         project_link = self.create_project_link()
         summary = self.create_summary()
+        results = self.create_results()
 
         report = ""
         report += f"{header}\n\n"
         report += f"{project_link}\n\n"
-        report += f"{summary}"
+        report += f"{summary}\n\n"
+        report += f"{results}"
 
         self.report_path.write_text(report, encoding="utf-8")
 
