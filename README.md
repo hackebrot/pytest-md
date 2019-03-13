@@ -129,11 +129,21 @@ This project is inspired by the fantastic [pytest-html] plugin! 💻
 
 ## Community
 
+Would you like to contribute to **pytest-md**? You're awesome! 😃
+
+Please check out the [good first issue][good first issue] label for tasks, that
+are good candidates for your first contribution to **pytest-md**. Your
+contributions are greatly appreciated! Every little bit helps, and credit will
+always be given! Find out who has already contributed to **pytest-md**
+[here][community]!  🌍🌏🌎
+
 Please note that **pytest-md** is released with a [Contributor Code of
 Conduct][code of conduct]. By participating in this project you agree to abide
 by its terms.
 
+[good first issue]: https://github.com/hackebrot/pytest-md/labels/good%20first%20issue
 [code of conduct]: https://github.com/hackebrot/pytest-md/blob/master/CODE_OF_CONDUCT.md
+[community]: https://github.com/hackebrot/pytest-md/blob/master/CONTRIBUTORS.md
 
 ## License
 
