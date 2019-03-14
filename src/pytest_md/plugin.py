@@ -1,6 +1,5 @@
 import datetime
 import collections
-import html
 import pathlib
 import time
 
@@ -168,7 +167,7 @@ class MarkdownPlugin:
                         results += f" `{domaininfo}`\n"
 
                     if outcome in ("error", "failed"):
-                        results += f"```\n{report.longreprtext}```\n"
+                        results += f"```\n{report.longreprtext}\n```\n"
                 results += "\n"
         return results
 
