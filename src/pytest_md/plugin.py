@@ -167,8 +167,8 @@ class MarkdownPlugin:
                         results += f" `{domaininfo}`\n"
 
                     if outcome in ("error", "failed"):
-                        results += f"```\n{report.longreprtext}\n```\n"
-                results += "\n"
+                        results += f"\n```\n{report.longreprtext}\n```\n"
+            results += "\n"
         return results
 
     def pytest_sessionfinish(self, session):
@@ -178,14 +178,18 @@ class MarkdownPlugin:
         header = self.create_header()
         project_link = self.create_project_link()
         summary = self.create_summary()
-        results = self.create_results()
 
         report = ""
         report += f"{header}\n\n"
         report += f"{project_link}\n\n"
-        report += f"{summary}\n\n"
-        report += f"{results}"
+        report += f"{summary}\n"
 
+        if self.config.option.verbose > 0:
+            results = self.create_results()
+            report += f"{results}"
+
+        # Cleanup trailing lines
+        report = f"{report.rstrip()}\n"
         self.report_path.write_text(report, encoding="utf-8")
 
 
