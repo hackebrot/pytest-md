@@ -151,12 +151,12 @@ def fixture_report_content(mode, now):
 
             8 tests ran in 0.00 seconds ⏱
 
+            - 1 💩
             - 1 😿
             - 3 🦊
             - 1 🙈
             - 1 🤓
             - 1 😜
-            - 1 💩
             """
         )
 
@@ -173,16 +173,151 @@ def fixture_report_content(mode, now):
 
             8 tests ran in 0.00 seconds ⏱
 
+            - 1 error 💩
             - 1 failed 😿
             - 3 passed 🦊
             - 1 skipped 🙈
             - 1 xfailed 🤓
             - 1 xpassed 😜
-            - 1 error 💩
+
+            ## 1 ERROR 💩
+
+            ### test_emoji_tests.py
+
+            0.00s ⏱  `error at setup of test_error`
+
+            ```
+            @pytest.fixture
+                def number():
+            >       return 1234 / 0
+            E       ZeroDivisionError: division by zero
+
+            test_emoji_tests.py:37: ZeroDivisionError
+            ```
+
+            ## 1 FAILED 😿
+
+            ### test_emoji_tests.py
+
+            0.00s ⏱  `test_failed`
+
+            ```
+            def test_failed():
+            >       assert "emoji" == "hello world"
+            E       AssertionError: assert 'emoji' == 'hello world'
+            E         - emoji
+            E         + hello world
+
+            test_emoji_tests.py:5: AssertionError
+            ```
+
+            ## 3 PASSED 🦊
+
+            ### test_emoji_tests.py
+
+            0.00s ⏱  `test_passed[Sara-Hello Sara!]`
+            0.00s ⏱  `test_passed[Mat-Hello Mat!]`
+            0.00s ⏱  `test_passed[Annie-Hello Annie!]`
+
+            ## 1 SKIPPED 🙈
+
+            ### test_emoji_tests.py
+
+            0.00s ⏱  `test_skipped`
+
+            ## 1 XFAILED 🤓
+
+            ### test_emoji_tests.py
+
+            0.00s ⏱  `test_xfailed`
+
+            ## 1 XPASSED 😜
+
+            ### test_emoji_tests.py
+
+            0.00s ⏱  `test_xpass`
             """
         )
 
     # Return the default report for Mode.NORMAL and Mode.VERBOSE
+    if mode is Mode.VERBOSE:
+        return textwrap.dedent(
+            f"""\
+            # Test Report
+
+            *Report generated on {report_date} at {report_time} by [pytest-md]*
+
+            [pytest-md]: https://github.com/hackebrot/pytest-md
+
+            ## Summary
+
+            8 tests ran in 0.00 seconds
+
+            - 1 error
+            - 1 failed
+            - 3 passed
+            - 1 skipped
+            - 1 xfailed
+            - 1 xpassed
+
+            ## 1 error
+
+            ### test_emoji_tests.py
+
+            0.00s `error at setup of test_error`
+
+            ```
+            @pytest.fixture
+                def number():
+            >       return 1234 / 0
+            E       ZeroDivisionError: division by zero
+
+            test_emoji_tests.py:37: ZeroDivisionError
+            ```
+
+            ## 1 failed
+
+            ### test_emoji_tests.py
+
+            0.00s `test_failed`
+
+            ```
+            def test_failed():
+            >       assert "emoji" == "hello world"
+            E       AssertionError: assert 'emoji' == 'hello world'
+            E         - emoji
+            E         + hello world
+
+            test_emoji_tests.py:5: AssertionError
+            ```
+
+            ## 3 passed
+
+            ### test_emoji_tests.py
+
+            0.00s `test_passed[Sara-Hello Sara!]`
+            0.00s `test_passed[Mat-Hello Mat!]`
+            0.00s `test_passed[Annie-Hello Annie!]`
+
+            ## 1 skipped
+
+            ### test_emoji_tests.py
+
+            0.00s `test_skipped`
+
+            ## 1 xfailed
+
+            ### test_emoji_tests.py
+
+            0.00s `test_xfailed`
+
+            ## 1 xpassed
+
+            ### test_emoji_tests.py
+
+            0.00s `test_xpass`
+            """
+        )
     return textwrap.dedent(
         f"""\
         # Test Report
@@ -195,12 +330,12 @@ def fixture_report_content(mode, now):
 
         8 tests ran in 0.00 seconds
 
+        - 1 error
         - 1 failed
         - 3 passed
         - 1 skipped
         - 1 xfailed
         - 1 xpassed
-        - 1 error
         """
     )
 
