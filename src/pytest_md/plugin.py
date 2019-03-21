@@ -40,15 +40,6 @@ class MarkdownPlugin:
         if self._emoji_repr is not None:
             return self._emoji_repr
 
-        emoji_hooks = {
-            Outcome.PASSED: self.config.hook.pytest_emoji_passed,
-            Outcome.ERROR: self.config.hook.pytest_emoji_error,
-            Outcome.SKIPPED: self.config.hook.pytest_emoji_skipped,
-            Outcome.FAILED: self.config.hook.pytest_emoji_failed,
-            Outcome.XFAILED: self.config.hook.pytest_emoji_xfailed,
-            Outcome.XPASSED: self.config.hook.pytest_emoji_xpassed,
-        }
-
         def emoji_repr(short, verbose):
             """Return the short or verbose emoji repr based on self.config."""
 
@@ -58,8 +49,15 @@ class MarkdownPlugin:
             return short
 
         self._emoji_repr = {
-            outcome: emoji_repr(*hook(config=self.config))
-            for outcome, hook in emoji_hooks.items()
+            outcome: emoji_repr(*emoji_hook(config=self.config))
+            for outcome, emoji_hook in (
+                (Outcome.PASSED, self.config.hook.pytest_emoji_passed),
+                (Outcome.ERROR, self.config.hook.pytest_emoji_error),
+                (Outcome.SKIPPED, self.config.hook.pytest_emoji_skipped),
+                (Outcome.FAILED, self.config.hook.pytest_emoji_failed),
+                (Outcome.XFAILED, self.config.hook.pytest_emoji_xfailed),
+                (Outcome.XPASSED, self.config.hook.pytest_emoji_xpassed),
+            )
         }
 
         return self._emoji_repr
