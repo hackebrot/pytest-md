@@ -1,10 +1,19 @@
-import datetime
 import collections
+import datetime
+import enum
 import pathlib
 import time
 
 
-OUTCOMES = ("error", "failed", "passed", "skipped", "xfailed", "xpassed")
+class Outcome(enum.Enum):
+    """Enum for the different pytest outcomes."""
+
+    ERROR = "error"
+    FAILED = "failed"
+    PASSED = "passed"
+    SKIPPED = "skipped"
+    XFAILED = "xfailed"
+    XPASSED = "xpassed"
 
 
 class MarkdownPlugin:
@@ -28,12 +37,12 @@ class MarkdownPlugin:
             return self._emoji_repr
 
         emoji_hooks = {
-            "passed": self.config.hook.pytest_emoji_passed,
-            "error": self.config.hook.pytest_emoji_error,
-            "skipped": self.config.hook.pytest_emoji_skipped,
-            "failed": self.config.hook.pytest_emoji_failed,
-            "xfailed": self.config.hook.pytest_emoji_xfailed,
-            "xpassed": self.config.hook.pytest_emoji_xpassed,
+            Outcome.PASSED: self.config.hook.pytest_emoji_passed,
+            Outcome.ERROR: self.config.hook.pytest_emoji_error,
+            Outcome.SKIPPED: self.config.hook.pytest_emoji_skipped,
+            Outcome.FAILED: self.config.hook.pytest_emoji_failed,
+            Outcome.XFAILED: self.config.hook.pytest_emoji_xfailed,
+            Outcome.XPASSED: self.config.hook.pytest_emoji_xpassed,
         }
 
         def emoji_repr(short, verbose):
@@ -50,31 +59,31 @@ class MarkdownPlugin:
     def pytest_runtest_logreport(self, report):
         if report.when in ("setup", "teardown"):
             if report.failed:
-                self.reports["error"].append(report)
+                self.reports[Outcome.ERROR].append(report)
                 return
             elif report.skipped:
-                self.reports["skipped"].append(report)
+                self.reports[Outcome.SKIPPED].append(report)
                 return
 
         if hasattr(report, "wasxfail"):
             if report.skipped:
-                self.reports["xfailed"].append(report)
+                self.reports[Outcome.XFAILED].append(report)
                 return
             elif report.passed:
-                self.reports["xpassed"].append(report)
+                self.reports[Outcome.XPASSED].append(report)
                 return
             else:
                 return
 
         if report.when == "call":
             if report.passed:
-                self.reports["passed"].append(report)
+                self.reports[Outcome.PASSED].append(report)
                 return
             elif report.skipped:
-                self.reports["skipped"].append(report)
+                self.reports[Outcome.SKIPPED].append(report)
                 return
             elif report.failed:
-                self.reports["failed"].append(report)
+                self.reports[Outcome.FAILED].append(report)
                 return
 
     def pytest_terminal_summary(self, terminalreporter):
@@ -108,7 +117,7 @@ class MarkdownPlugin:
     def create_summary(self):
         outcomes = collections.OrderedDict(
             (outcome, len(self.reports[outcome]))
-            for outcome in OUTCOMES
+            for outcome in [*Outcome]
             if outcome in self.reports
         )
         num_tests = sum(outcomes.values())
@@ -124,7 +133,7 @@ class MarkdownPlugin:
         outcome_text = ""
 
         for outcome, count in outcomes.items():
-            text = outcome
+            text = outcome.value
             if self.emojis_enabled:
                 text = self.emoji_repr[outcome].strip()
             outcome_text += f"- {count} {text}\n".lower()
@@ -134,7 +143,7 @@ class MarkdownPlugin:
     def create_results(self):
         outcomes = collections.OrderedDict()
 
-        for outcome in OUTCOMES:
+        for outcome in [*Outcome]:
             if outcome not in self.reports:
                 continue
             file_reports = collections.OrderedDict()
@@ -147,7 +156,7 @@ class MarkdownPlugin:
         results = ""
 
         for outcome, file_reports in outcomes.items():
-            outcome_text = outcome
+            outcome_text = outcome.value
             if self.emojis_enabled:
                 outcome_text = self.emoji_repr[outcome].strip()
 
@@ -161,12 +170,14 @@ class MarkdownPlugin:
                     if self.emojis_enabled:
                         results += " ⏱ "
 
-                    if outcome == "error":
-                        results += f" `{outcome} at {report.when} of {domaininfo}`\n"
+                    if outcome is Outcome.ERROR:
+                        results += (
+                            f" `{outcome.value} at {report.when} of {domaininfo}`\n"
+                        )
                     else:
                         results += f" `{domaininfo}`\n"
 
-                    if outcome in ("error", "failed"):
+                    if outcome in (Outcome.ERROR, Outcome.FAILED):
                         results += f"\n```\n{report.longreprtext}\n```\n"
             results += "\n"
         return results
