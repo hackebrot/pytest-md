@@ -187,7 +187,7 @@ class MarkdownPlugin:
                 results += f"### {filesystempath}\n\n"
                 for report in file_reports:
                     domaininfo = report.location[2]
-                    results += f"{report.duration*100:.2f}s"
+                    results += f"{report.duration:.2f}s"
                     if self.emojis_enabled:
                         results += " ⏱ "
 
