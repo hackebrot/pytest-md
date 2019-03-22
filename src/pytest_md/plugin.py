@@ -134,30 +134,27 @@ class MarkdownPlugin:
     def create_summary(self):
         """Create a summary for the Markdown report."""
 
-        outcomes = collections.OrderedDict(
-            (outcome, len(self.reports[outcome]))
-            for outcome in [*Outcome]
-            if outcome in self.reports
-        )
-        num_tests = sum(outcomes.values())
+        outcome_text = ""
+        total_count = 0
+
+        for outcome in (o for o in Outcome if o in self.reports):
+            count = len(self.reports[outcome])
+            total_count += count
+
+            text = outcome.value
+            if self.emojis_enabled:
+                text = self.emoji_repr[outcome].strip()
+
+            outcome_text += f"- {count} {text}\n".lower()
 
         summary = ""
         summary += f"## Summary\n\n"
-        summary += f"{num_tests} tests ran in {self.session_duration:.2f} seconds"
+        summary += f"{total_count} tests ran in {self.session_duration:.2f} seconds"
 
         if self.emojis_enabled:
             summary = f"{summary} ⏱"
 
-        summary += "\n\n"
-        outcome_text = ""
-
-        for outcome, count in outcomes.items():
-            text = outcome.value
-            if self.emojis_enabled:
-                text = self.emoji_repr[outcome].strip()
-            outcome_text += f"- {count} {text}\n".lower()
-
-        return summary + outcome_text
+        return summary + "\n\n" + outcome_text
 
     def create_results(self):
         """Create results for the individual tests for the Markdown report."""
