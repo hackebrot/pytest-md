@@ -19,37 +19,29 @@ class Outcome(enum.Enum):
 class MarkdownPlugin:
     """Plugin for generating Markdown reports."""
 
-    def __init__(self, config, report_path):
+    def __init__(self, config, report_path, emojis_enabled=False):
         self.config = config
         self.report_path = report_path
+        self.emojis_enabled = emojis_enabled
+
         self.reports = collections.defaultdict(list)
-        self.emojis_enabled = self._emojis_enabled()
-        self._emoji_repr = None
 
-    def _emojis_enabled(self):
-        """Check if pytest-emoji is installed and enabled."""
+        if emojis_enabled:
+            self.emojis_by_outcome = self._retrieve_emojis()
 
-        if not self.config.pluginmanager.hasplugin("emoji"):
-            return False
-        return self.config.option.emoji is True
-
-    @property
-    def emoji_repr(self):
+    def _retrieve_emojis(self):
         """Return a mapping from report Outcome to an emoji text."""
 
-        if self._emoji_repr is not None:
-            return self._emoji_repr
-
-        def emoji_repr(short, verbose):
-            """Return the short or verbose emoji repr based on self.config."""
+        def emoji(short, verbose):
+            """Return the short or verbose emoji based on self.config."""
 
             if self.config.option.verbose > 0:
                 return verbose
 
             return short
 
-        self._emoji_repr = {
-            outcome: emoji_repr(*emoji_hook(config=self.config))
+        return {
+            outcome: emoji(*emoji_hook(config=self.config))
             for outcome, emoji_hook in (
                 (Outcome.PASSED, self.config.hook.pytest_emoji_passed),
                 (Outcome.ERROR, self.config.hook.pytest_emoji_error),
@@ -59,8 +51,6 @@ class MarkdownPlugin:
                 (Outcome.XPASSED, self.config.hook.pytest_emoji_xpassed),
             )
         }
-
-        return self._emoji_repr
 
     def pytest_runtest_logreport(self, report):
         """Hook implementation that collects test reports by outcome."""
@@ -110,7 +100,8 @@ class MarkdownPlugin:
 
     def create_header(self):
         """Create a header for the Markdown report."""
-        return "# Test Report"
+
+        return "# Test Report\n"
 
     def create_project_link(self):
         """Create a project link for the Markdown report."""
@@ -127,7 +118,7 @@ class MarkdownPlugin:
         project_link = ""
         project_link += f"*Report generated on {report_date} at {report_time} "
         project_link += f"by [pytest-md]*{extra}\n\n"
-        project_link += f"[pytest-md]: https://github.com/hackebrot/pytest-md"
+        project_link += f"[pytest-md]: https://github.com/hackebrot/pytest-md\n"
 
         return project_link
 
@@ -142,8 +133,9 @@ class MarkdownPlugin:
             total_count += count
 
             text = outcome.value
+
             if self.emojis_enabled:
-                text = self.emoji_repr[outcome].strip()
+                text = self.emojis_by_outcome[outcome].strip()
 
             outcome_text += f"- {count} {text}\n".lower()
 
@@ -159,45 +151,51 @@ class MarkdownPlugin:
     def create_results(self):
         """Create results for the individual tests for the Markdown report."""
 
-        outcomes = collections.OrderedDict()
+        outcomes = {}
 
-        for outcome in [*Outcome]:
-            if outcome not in self.reports:
-                continue
-            file_reports = collections.OrderedDict()
+        for outcome in (o for o in Outcome if o in self.reports):
+            reports_by_file = collections.defaultdict(list)
+
             for report in self.reports[outcome]:
-                filesystempath = report.location[0]
-                file_reports.setdefault(filesystempath, [])
-                file_reports[filesystempath].append(report)
-            outcomes[outcome] = file_reports
+                test_file = report.location[0]
+                reports_by_file[test_file].append(report)
+
+            outcomes[outcome] = reports_by_file
 
         results = ""
 
-        for outcome, file_reports in outcomes.items():
+        for outcome, reports_by_file in outcomes.items():
             outcome_text = outcome.value
+
             if self.emojis_enabled:
-                outcome_text = self.emoji_repr[outcome].strip()
+                outcome_text = self.emojis_by_outcome[outcome].strip()
 
-            results += f"## {len(self.reports[outcome])} {outcome_text}\n\n"
+            results += f"## {len(self.reports[outcome])} {outcome_text}\n\n".lower()
 
-            for filesystempath, file_reports in file_reports.items():
-                results += f"### {filesystempath}\n\n"
-                for report in file_reports:
-                    domaininfo = report.location[2]
-                    results += f"{report.duration:.2f}s"
-                    if self.emojis_enabled:
-                        results += " ⏱ "
+            for test_file, reports in reports_by_file.items():
+                results += f"### {test_file}\n\n"
+
+                for report in reports:
+                    test_function = report.location[2]
 
                     if outcome is Outcome.ERROR:
                         results += (
-                            f" `{outcome.value} at {report.when} of {domaininfo}`\n"
+                            f"`{outcome.value} at {report.when} of {test_function}`"
                         )
                     else:
-                        results += f" `{domaininfo}`\n"
+                        results += f"`{test_function}`"
+
+                    results += f" {report.duration:.2f}s"
+                    if self.emojis_enabled:
+                        results += " ⏱"
+
+                    results += "\n"
 
                     if outcome in (Outcome.ERROR, Outcome.FAILED):
                         results += f"\n```\n{report.longreprtext}\n```\n"
-            results += "\n"
+
+                    results += "\n"
+
         return results
 
     def pytest_sessionfinish(self, session):
@@ -213,17 +211,15 @@ class MarkdownPlugin:
         summary = self.create_summary()
 
         report = ""
-        report += f"{header}\n\n"
-        report += f"{project_link}\n\n"
+        report += f"{header}\n"
+        report += f"{project_link}\n"
         report += f"{summary}\n"
 
         if self.config.option.verbose > 0:
             results = self.create_results()
             report += f"{results}"
 
-        # Cleanup trailing lines
-        report = f"{report.rstrip()}\n"
-        self.report_path.write_text(report, encoding="utf-8")
+        self.report_path.write_text(report.rstrip() + "\n", encoding="utf-8")
 
 
 def pytest_addoption(parser):
@@ -248,7 +244,20 @@ def pytest_configure(config):
     if not mdpath:
         return
 
-    config._md = MarkdownPlugin(config, pathlib.Path(mdpath).expanduser().resolve())
+    def emojis_enabled():
+        """Check if pytest-emoji is installed and enabled."""
+
+        if not config.pluginmanager.hasplugin("emoji"):
+            return False
+
+        return config.option.emoji is True
+
+    config._md = MarkdownPlugin(
+        config,
+        report_path=pathlib.Path(mdpath).expanduser().resolve(),
+        emojis_enabled=emojis_enabled(),
+    )
+
     config.pluginmanager.register(config._md)
 
 

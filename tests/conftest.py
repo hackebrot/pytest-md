@@ -126,9 +126,10 @@ def fixture_cli_options(mode):
 @pytest.fixture(name="now")
 def fixture_now():
     """Patch the current time for reproducable test reports."""
-    freezer = freezegun.freeze_time("2019-01-21 18:30:40")
+    now = datetime.datetime(2019, 1, 21, 18, 30, 40)
+    freezer = freezegun.freeze_time(now)
     freezer.start()
-    yield datetime.datetime(2019, 1, 21, 18, 30, 40)
+    yield now
     freezer.stop()
 
 
@@ -180,11 +181,11 @@ def fixture_report_content(mode, now):
             - 1 xfailed 🤓
             - 1 xpassed 😜
 
-            ## 1 ERROR 💩
+            ## 1 error 💩
 
             ### test_emoji_tests.py
 
-            0.00s ⏱  `error at setup of test_error`
+            `error at setup of test_error` 0.00s ⏱
 
             ```
             @pytest.fixture
@@ -195,11 +196,11 @@ def fixture_report_content(mode, now):
             test_emoji_tests.py:37: ZeroDivisionError
             ```
 
-            ## 1 FAILED 😿
+            ## 1 failed 😿
 
             ### test_emoji_tests.py
 
-            0.00s ⏱  `test_failed`
+            `test_failed` 0.00s ⏱
 
             ```
             def test_failed():
@@ -211,31 +212,33 @@ def fixture_report_content(mode, now):
             test_emoji_tests.py:5: AssertionError
             ```
 
-            ## 3 PASSED 🦊
+            ## 3 passed 🦊
 
             ### test_emoji_tests.py
 
-            0.00s ⏱  `test_passed[Sara-Hello Sara!]`
-            0.00s ⏱  `test_passed[Mat-Hello Mat!]`
-            0.00s ⏱  `test_passed[Annie-Hello Annie!]`
+            `test_passed[Sara-Hello Sara!]` 0.00s ⏱
 
-            ## 1 SKIPPED 🙈
+            `test_passed[Mat-Hello Mat!]` 0.00s ⏱
 
-            ### test_emoji_tests.py
+            `test_passed[Annie-Hello Annie!]` 0.00s ⏱
 
-            0.00s ⏱  `test_skipped`
-
-            ## 1 XFAILED 🤓
+            ## 1 skipped 🙈
 
             ### test_emoji_tests.py
 
-            0.00s ⏱  `test_xfailed`
+            `test_skipped` 0.00s ⏱
 
-            ## 1 XPASSED 😜
+            ## 1 xfailed 🤓
 
             ### test_emoji_tests.py
 
-            0.00s ⏱  `test_xpass`
+            `test_xfailed` 0.00s ⏱
+
+            ## 1 xpassed 😜
+
+            ### test_emoji_tests.py
+
+            `test_xpass` 0.00s ⏱
             """
         )
 
@@ -264,7 +267,7 @@ def fixture_report_content(mode, now):
 
             ### test_emoji_tests.py
 
-            0.00s `error at setup of test_error`
+            `error at setup of test_error` 0.00s
 
             ```
             @pytest.fixture
@@ -279,7 +282,7 @@ def fixture_report_content(mode, now):
 
             ### test_emoji_tests.py
 
-            0.00s `test_failed`
+            `test_failed` 0.00s
 
             ```
             def test_failed():
@@ -295,29 +298,32 @@ def fixture_report_content(mode, now):
 
             ### test_emoji_tests.py
 
-            0.00s `test_passed[Sara-Hello Sara!]`
-            0.00s `test_passed[Mat-Hello Mat!]`
-            0.00s `test_passed[Annie-Hello Annie!]`
+            `test_passed[Sara-Hello Sara!]` 0.00s
+
+            `test_passed[Mat-Hello Mat!]` 0.00s
+
+            `test_passed[Annie-Hello Annie!]` 0.00s
 
             ## 1 skipped
 
             ### test_emoji_tests.py
 
-            0.00s `test_skipped`
+            `test_skipped` 0.00s
 
             ## 1 xfailed
 
             ### test_emoji_tests.py
 
-            0.00s `test_xfailed`
+            `test_xfailed` 0.00s
 
             ## 1 xpassed
 
             ### test_emoji_tests.py
 
-            0.00s `test_xpass`
+            `test_xpass` 0.00s
             """
         )
+
     return textwrap.dedent(
         f"""\
         # Test Report
