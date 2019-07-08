@@ -22,6 +22,7 @@ class MarkdownPlugin:
     def __init__(self, config, report_path, emojis_enabled=False):
         self.config = config
         self.report_path = report_path
+        self.report = ""
         self.emojis_enabled = emojis_enabled
 
         self.reports = collections.defaultdict(list)
@@ -210,16 +211,15 @@ class MarkdownPlugin:
         project_link = self.create_project_link()
         summary = self.create_summary()
 
-        report = ""
-        report += f"{header}\n"
-        report += f"{project_link}\n"
-        report += f"{summary}\n"
+        self.report += f"{header}\n"
+        self.report += f"{project_link}\n"
+        self.report += f"{summary}\n"
 
         if self.config.option.verbose > 0:
             results = self.create_results()
-            report += f"{results}"
+            self.report += f"{results}"
 
-        self.report_path.write_text(report.rstrip() + "\n", encoding="utf-8")
+        self.report_path.write_text(self.report.rstrip() + "\n", encoding="utf-8")
 
 
 def pytest_addoption(parser):
