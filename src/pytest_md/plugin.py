@@ -258,7 +258,7 @@ def pytest_configure(config):
         emojis_enabled=emojis_enabled(),
     )
 
-    config.pluginmanager.register(config._md)
+    config.pluginmanager.register(config._md, "markdownplugin")
 
 
 def pytest_unconfigure(config):
