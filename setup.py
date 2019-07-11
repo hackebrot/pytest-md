@@ -9,7 +9,7 @@ def read(*args):
 
 setuptools.setup(
     name="pytest-md",
-    version="0.1.1",
+    version="0.2.0",
     author="Raphael Pierzina",
     author_email="raphael@hackebrot.de",
     maintainer="Raphael Pierzina",
