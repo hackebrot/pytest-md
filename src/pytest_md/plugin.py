@@ -156,7 +156,7 @@ class MarkdownPlugin:
         outcomes = {}
 
         for outcome in (o for o in Outcome if o in self.reports):
-            reports_by_file: Dict[Outcome, List] = collections.defaultdict(list)
+            reports_by_file: Dict[str, List] = collections.defaultdict(list)
 
             for report in self.reports[outcome]:
                 test_file = report.location[0]
