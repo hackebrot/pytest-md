@@ -3,6 +3,7 @@ import datetime
 import enum
 import pathlib
 import time
+from typing import Dict, List
 
 
 class Outcome(enum.Enum):
@@ -19,13 +20,13 @@ class Outcome(enum.Enum):
 class MarkdownPlugin:
     """Plugin for generating Markdown reports."""
 
-    def __init__(self, config, report_path, emojis_enabled=False):
+    def __init__(self, config, report_path, emojis_enabled: bool = False) -> None:
         self.config = config
         self.report_path = report_path
         self.report = ""
         self.emojis_enabled = emojis_enabled
 
-        self.reports = collections.defaultdict(list)
+        self.reports: Dict[Outcome, List] = collections.defaultdict(list)
 
         if emojis_enabled:
             self.emojis_by_outcome = self._retrieve_emojis()
@@ -53,7 +54,7 @@ class MarkdownPlugin:
             )
         }
 
-    def pytest_runtest_logreport(self, report):
+    def pytest_runtest_logreport(self, report) -> None:
         """Hook implementation that collects test reports by outcome."""
 
         if report.when in ("setup", "teardown"):
@@ -85,7 +86,7 @@ class MarkdownPlugin:
                 self.reports[Outcome.FAILED].append(report)
                 return
 
-    def pytest_terminal_summary(self, terminalreporter):
+    def pytest_terminal_summary(self, terminalreporter) -> None:
         """Hook implementation that writes the path to the generated report to
         the terminal.
         """
@@ -94,17 +95,17 @@ class MarkdownPlugin:
             "-", f"generated Markdown report: {self.report_path}"
         )
 
-    def pytest_sessionstart(self, session):
+    def pytest_sessionstart(self, session) -> None:
         """Hook implementation to store the time when the session started."""
 
         self.session_start = time.time()
 
-    def create_header(self):
+    def create_header(self) -> str:
         """Create a header for the Markdown report."""
 
         return "# Test Report\n"
 
-    def create_project_link(self):
+    def create_project_link(self) -> str:
         """Create a project link for the Markdown report."""
 
         extra = ""
@@ -123,7 +124,7 @@ class MarkdownPlugin:
 
         return project_link
 
-    def create_summary(self):
+    def create_summary(self) -> str:
         """Create a summary for the Markdown report."""
 
         outcome_text = ""
@@ -149,13 +150,13 @@ class MarkdownPlugin:
 
         return summary + "\n\n" + outcome_text
 
-    def create_results(self):
+    def create_results(self) -> str:
         """Create results for the individual tests for the Markdown report."""
 
         outcomes = {}
 
         for outcome in (o for o in Outcome if o in self.reports):
-            reports_by_file = collections.defaultdict(list)
+            reports_by_file: Dict[str, List] = collections.defaultdict(list)
 
             for report in self.reports[outcome]:
                 test_file = report.location[0]
@@ -199,7 +200,7 @@ class MarkdownPlugin:
 
         return results
 
-    def pytest_sessionfinish(self, session):
+    def pytest_sessionfinish(self, session) -> None:
         """Hook implementation that generates a Markdown report and writes it
         to disk.
         """
@@ -236,7 +237,7 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_configure(config):
+def pytest_configure(config) -> None:
     """Hook implementation that registers the plugin if "--md" is specified."""
 
     mdpath = config.getoption("mdpath")
@@ -244,7 +245,7 @@ def pytest_configure(config):
     if not mdpath:
         return
 
-    def emojis_enabled():
+    def emojis_enabled() -> bool:
         """Check if pytest-emoji is installed and enabled."""
 
         if not config.pluginmanager.hasplugin("emoji"):
@@ -261,7 +262,7 @@ def pytest_configure(config):
     config.pluginmanager.register(config._md, "md_plugin")
 
 
-def pytest_unconfigure(config):
+def pytest_unconfigure(config) -> None:
     """Hook implementation that unregisters the plugin."""
 
     md = getattr(config, "_md", None)
