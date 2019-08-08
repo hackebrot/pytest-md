@@ -1,4 +1,4 @@
-# Contributors
+# Community
 
 - [@hackebrot]
 - [@seanson]

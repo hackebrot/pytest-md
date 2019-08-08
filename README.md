@@ -143,7 +143,7 @@ by its terms.
 
 [good first issue]: https://github.com/hackebrot/pytest-md/labels/good%20first%20issue
 [code of conduct]: https://github.com/hackebrot/pytest-md/blob/master/CODE_OF_CONDUCT.md
-[community]: https://github.com/hackebrot/pytest-md/blob/master/CONTRIBUTORS.md
+[community]: https://github.com/hackebrot/pytest-md/blob/master/COMMUNITY.md
 
 ## License
 
