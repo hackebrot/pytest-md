@@ -206,8 +206,8 @@ def fixture_report_content(mode, now):
             def test_failed():
             >       assert "emoji" == "hello world"
             E       AssertionError: assert 'emoji' == 'hello world'
-            E         - emoji
-            E         + hello world
+            E         - hello world
+            E         + emoji
 
             test_emoji_tests.py:5: AssertionError
             ```
@@ -288,8 +288,8 @@ def fixture_report_content(mode, now):
             def test_failed():
             >       assert "emoji" == "hello world"
             E       AssertionError: assert 'emoji' == 'hello world'
-            E         - emoji
-            E         + hello world
+            E         - hello world
+            E         + emoji
 
             test_emoji_tests.py:5: AssertionError
             ```
