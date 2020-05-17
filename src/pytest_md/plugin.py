@@ -117,10 +117,12 @@ class MarkdownPlugin:
         report_date = now.strftime("%d-%b-%Y")
         report_time = now.strftime("%H:%M:%S")
 
+        repo = "https://github.com/hackebrot/pytest-md"
+
         project_link = ""
         project_link += f"*Report generated on {report_date} at {report_time} "
         project_link += f"by [pytest-md]*{extra}\n\n"
-        project_link += f"[pytest-md]: https://github.com/hackebrot/pytest-md\n"
+        project_link += f"[pytest-md]: {repo}\n"
 
         return project_link
 
@@ -141,8 +143,7 @@ class MarkdownPlugin:
 
             outcome_text += f"- {count} {text}\n".lower()
 
-        summary = ""
-        summary += f"## Summary\n\n"
+        summary = "## Summary\n\n"
         summary += f"{total_count} tests ran in {self.session_duration:.2f} seconds"
 
         if self.emojis_enabled:
